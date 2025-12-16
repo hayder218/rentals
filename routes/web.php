@@ -26,3 +26,9 @@ use App\Livewire\Maintenances\Create as MaintenancesCreate;
 
 Route::get('/maintenances', MaintenancesIndex::class)->name('maintenances.index');
 Route::get('/maintenances/create', MaintenancesCreate::class)->name('maintenances.create');
+
+use App\Livewire\Settings;
+Route::get('/settings', Settings::class)->name('settings');
+
+use App\Http\Controllers\ContractController;
+Route::get('/rentals/{rental}/contract', [ContractController::class, 'download'])->name('rentals.contract');

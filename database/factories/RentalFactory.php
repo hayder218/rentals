@@ -19,13 +19,16 @@ class RentalFactory extends Factory
     {
         $startDate = fake()->dateTimeBetween('-2 months', 'now');
         $endDate = fake()->dateTimeBetween($startDate, '+1 month');
+        $totalCost = fake()->randomFloat(2, 50, 1000);
 
         return [
             'car_id' => Car::factory(),
             'customer_name' => fake()->name(),
+            'customer_identification' => strtoupper(fake()->bothify('??######')),
             'start_date' => $startDate,
             'end_date' => $endDate,
-            'total_cost' => fake()->randomFloat(2, 50, 1000),
+            'total_cost' => $totalCost,
+            'prepaid_amount' => fake()->randomFloat(2, 0, $totalCost),
             'status' => fake()->randomElement(['active', 'completed', 'cancelled']),
         ];
     }

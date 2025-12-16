@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
+        \App\Models\Setting::set('contract_terms', "1. The Renter agrees to rent the Vehicle described above for the dates specified.\n2. The Renter acknowledges that the Vehicle is in good operating condition.\n3. The Renter agrees to pay the Total Cost specified in this contract.\n4. The Vehicle shall not be used for any illegal purpose.\n5. The Renter is responsible for all fines and penalties incurred using the Vehicle during the rental period.");
+
         $cars = Car::factory(5)->create();
 
         Rental::factory(20)

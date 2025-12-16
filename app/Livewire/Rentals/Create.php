@@ -11,15 +11,19 @@ class Create extends Component
 {
     public $car_id;
     public $customer_name;
+    public $customer_identification;
     public $start_date;
     public $end_date;
     public $total_cost = 0;
+    public $prepaid_amount = 0;
 
     protected $rules = [
         'car_id' => 'required|exists:cars,id',
         'customer_name' => 'required|string|max:255',
+        'customer_identification' => 'required|string|max:255',
         'start_date' => 'required|date|after_or_equal:today',
         'end_date' => 'required|date|after:start_date',
+        'prepaid_amount' => 'required|numeric|min:0',
     ];
 
     public function updated($propertyName)
@@ -47,9 +51,11 @@ class Create extends Component
         $rental = Rental::create([
             'car_id' => $this->car_id,
             'customer_name' => $this->customer_name,
+            'customer_identification' => $this->customer_identification,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'total_cost' => $this->total_cost,
+            'prepaid_amount' => $this->prepaid_amount,
             'status' => 'active',
         ]);
 
