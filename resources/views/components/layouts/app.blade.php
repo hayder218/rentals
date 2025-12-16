@@ -8,6 +8,7 @@
     <title>{{ $title ?? 'FleetWise' }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -16,12 +17,7 @@
         <!-- Sidebar -->
         <aside class="w-64 bg-gray-900 text-white flex flex-col">
             <div class="p-6 flex items-center space-x-3">
-                <div class="bg-blue-600 p-2 rounded-lg">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-                    </svg>
-                </div>
+                <img src="{{ asset('logo.png') }}" alt="Logo" class="w-10 h-10 object-contain">
                 <div>
                     <h1 class="text-xl font-bold">FleetWise</h1>
                     <p class="text-xs text-gray-400">Rental & Maintenance</p>
