@@ -2,14 +2,15 @@
 
 namespace Database\Seeders;
 
+use App\Models\Car;
+use App\Models\Maintenance;
+use App\Models\Rental;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
@@ -21,5 +22,15 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        $cars = Car::factory(5)->create();
+
+        Rental::factory(20)
+            ->recycle($cars)
+            ->create();
+
+        Maintenance::factory(33)
+            ->recycle($cars)
+            ->create();
     }
 }
