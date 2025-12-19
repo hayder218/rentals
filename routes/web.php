@@ -32,3 +32,10 @@ Route::get('/settings', Settings::class)->name('settings');
 
 use App\Http\Controllers\ContractController;
 Route::get('/rentals/{rental}/contract', [ContractController::class, 'download'])->name('rentals.contract');
+
+Route::post('/logout', function () {
+    Illuminate\Support\Facades\Auth::logout();
+    session()->invalidate();
+    session()->regenerateToken();
+    return redirect('/');
+})->name('logout');

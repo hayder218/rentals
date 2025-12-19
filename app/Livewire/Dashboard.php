@@ -69,6 +69,7 @@ class Dashboard extends Component
             'revenue_growth' => $revenue_growth,
             'weekly_revenue_data' => $weekly_revenue_data,
             'recent_maintenance' => $recent_maintenance,
+            'rentals' => Rental::with('car')->latest()->get(),
         ]);
     }
 }
