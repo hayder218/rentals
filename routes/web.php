@@ -5,30 +5,38 @@ use App\Livewire\Cars\Index as CarsIndex;
 use App\Livewire\Cars\Create as CarsCreate;
 use App\Livewire\Cars\Edit as CarsEdit;
 
-use App\Livewire\Dashboard;
+use App\Http\Controllers\DashboardController;
 
-Route::get('/', Dashboard::class)->name('dashboard');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::get('/cars', CarsIndex::class)->name('cars.index');
-Route::get('/cars/create', CarsCreate::class)->name('cars.create');
-Route::get('/cars/{car}/edit', CarsEdit::class)->name('cars.edit');
+use App\Http\Controllers\CarController;
 
-use App\Livewire\Rentals\Index as RentalsIndex;
-use App\Livewire\Rentals\Create as RentalsCreate;
-use App\Livewire\Rentals\Edit as RentalsEdit;
+Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
+Route::get('/cars/create', [CarController::class, 'create'])->name('cars.create');
+Route::post('/cars', [CarController::class, 'store'])->name('cars.store');
+Route::get('/cars/{car}/edit', [CarController::class, 'edit'])->name('cars.edit');
+Route::put('/cars/{car}', [CarController::class, 'update'])->name('cars.update');
+Route::delete('/cars/{car}', [CarController::class, 'destroy'])->name('cars.destroy');
 
-Route::get('/rentals', RentalsIndex::class)->name('rentals.index');
-Route::get('/rentals/create', RentalsCreate::class)->name('rentals.create');
-Route::get('/rentals/{rental}/edit', RentalsEdit::class)->name('rentals.edit');
+use App\Http\Controllers\RentalController;
 
-use App\Livewire\Maintenances\Index as MaintenancesIndex;
-use App\Livewire\Maintenances\Create as MaintenancesCreate;
+Route::get('/rentals', [RentalController::class, 'index'])->name('rentals.index');
+Route::get('/rentals/create', [RentalController::class, 'create'])->name('rentals.create');
+Route::post('/rentals', [RentalController::class, 'store'])->name('rentals.store');
+Route::get('/rentals/{rental}/edit', [RentalController::class, 'edit'])->name('rentals.edit');
+Route::put('/rentals/{rental}', [RentalController::class, 'update'])->name('rentals.update');
+Route::delete('/rentals/{rental}', [RentalController::class, 'destroy'])->name('rentals.destroy');
 
-Route::get('/maintenances', MaintenancesIndex::class)->name('maintenances.index');
-Route::get('/maintenances/create', MaintenancesCreate::class)->name('maintenances.create');
+use App\Http\Controllers\MaintenanceController;
 
-use App\Livewire\Settings;
-Route::get('/settings', Settings::class)->name('settings');
+Route::get('/maintenances', [MaintenanceController::class, 'index'])->name('maintenances.index');
+Route::get('/maintenances/create', [MaintenanceController::class, 'create'])->name('maintenances.create');
+Route::post('/maintenances', [MaintenanceController::class, 'store'])->name('maintenances.store');
+Route::delete('/maintenances/{maintenance}', [MaintenanceController::class, 'destroy'])->name('maintenances.destroy');
+
+use App\Http\Controllers\SettingController;
+Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
 
 use App\Http\Controllers\ContractController;
 Route::get('/rentals/{rental}/contract', [ContractController::class, 'download'])->name('rentals.contract');

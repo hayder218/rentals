@@ -27,6 +27,11 @@ class Car extends Model
         return $this->hasMany(Rental::class);
     }
 
+    public function activeRentals()
+    {
+        return $this->hasMany(Rental::class)->whereIn('status', ['active', 'completed']);
+    }
+
     public function maintenances()
     {
         return $this->hasMany(Maintenance::class);
