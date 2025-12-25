@@ -68,7 +68,7 @@ class RentalController extends Controller
 
         $car->update(['status' => 'rented']);
 
-        return redirect()->route('rentals.index');
+        return redirect()->route('rentals.index')->with('success', 'Rental created successfully!');
     }
 
     public function edit(Rental $rental)
@@ -108,8 +108,7 @@ class RentalController extends Controller
         }
 
         $rental->update($validated);
-
-        return redirect()->route('rentals.index');
+        return redirect()->route('rentals.index')->with('success', 'Rental updated successfully!');
     }
 
 }

@@ -61,10 +61,12 @@ export default function Dashboard({ stats, chartData, trendData, recentMaintenan
                     <p className="text-muted-foreground mt-1 text-sm font-medium">Real-time performance analytics and operations monitor.</p>
                 </div>
                 <div className="flex space-x-3 w-full md:w-auto">
-                    <Button variant="outline" className="flex-1 md:flex-none h-11 px-6 rounded-xl border-dashed">
-                        <Download className="mr-2 h-4 w-4" />
-                        Intelligence Report
-                    </Button>
+                    <a href="/reports/rentals" target="_blank" className="flex-1 md:flex-none">
+                        <Button variant="outline" className="w-full h-11 px-6 rounded-xl border-dashed">
+                            <Download className="mr-2 h-4 w-4" />
+                            Intelligence Report
+                        </Button>
+                    </a>
                     <Link href="/rentals/create" className="flex-1 md:flex-none">
                         <Button className="w-full bg-blue-600 hover:bg-blue-700 h-11 px-8 rounded-xl shadow-lg shadow-blue-600/20">
                             <Plus className="mr-2 h-4 w-4" />

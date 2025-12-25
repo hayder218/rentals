@@ -15,7 +15,6 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 export default function Index({ cars }) {
-    console.log('Cars Index rendering, cars:', cars);
     const handleDelete = (id) => {
         toast.confirm("Delete Car?", {
             description: "Are you sure you want to remove this vehicle from the fleet? This action cannot be undone.",

@@ -33,7 +33,9 @@ export function DataTable({
     columns,
     data,
     searchPlaceholder = "Filter results...",
-    searchColumn
+    searchColumn,
+    exportHref,
+    onExport
 }) {
     const [sorting, setSorting] = useState([])
     const [columnFilters, setColumnFilters] = useState([])
@@ -70,10 +72,19 @@ export function DataTable({
                     </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                    <Button variant="outline" size="sm" className="hidden lg:flex">
-                        <Download className="mr-2 h-4 w-4" />
-                        Export
-                    </Button>
+                    {exportHref ? (
+                        <a href={exportHref} target="_blank">
+                            <Button variant="outline" size="sm" className="hidden lg:flex">
+                                <Download className="mr-2 h-4 w-4" />
+                                Export
+                            </Button>
+                        </a>
+                    ) : (
+                        <Button variant="outline" size="sm" className="hidden lg:flex" onClick={onExport}>
+                            <Download className="mr-2 h-4 w-4" />
+                            Export
+                        </Button>
+                    )}
                     <Button variant="outline" size="sm" className="hidden lg:flex">
                         <Columns className="mr-2 h-4 w-4" />
                         View

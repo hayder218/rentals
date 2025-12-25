@@ -1,9 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Cars\Index as CarsIndex;
-use App\Livewire\Cars\Create as CarsCreate;
-use App\Livewire\Cars\Edit as CarsEdit;
 
 use App\Http\Controllers\DashboardController;
 
@@ -40,3 +37,4 @@ Route::put('/settings', [SettingController::class, 'update'])->name('settings.up
 
 use App\Http\Controllers\ContractController;
 Route::get('/rentals/{rental}/contract', [ContractController::class, 'download'])->name('rentals.contract');
+Route::get('/reports/rentals', [ContractController::class, 'exportAll'])->name('reports.rentals');

@@ -47,7 +47,7 @@ class CarController extends Controller
 
         Car::create($validated);
 
-        return redirect()->route('cars.index');
+        return redirect()->route('cars.index')->with('success', 'Car created successfully!');
     }
 
     public function update(Request $request, Car $car)
@@ -62,8 +62,7 @@ class CarController extends Controller
         ]);
 
         $car->update($validated);
-
-        return redirect()->route('cars.index');
+        return redirect()->route('cars.index')->with('success', 'Car updated successfully!');
     }
 
     public function edit(Car $car)
@@ -76,6 +75,6 @@ class CarController extends Controller
     public function destroy(Car $car)
     {
         $car->delete();
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Car deleted successfully!');
     }
 }

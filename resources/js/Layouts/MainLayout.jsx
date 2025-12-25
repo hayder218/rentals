@@ -17,11 +17,20 @@ import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/Components/ThemeToggle';
 import { Button } from '@/Components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function MainLayout({ children }) {
-    const { url } = usePage();
+    const { url, props: { auth } } = usePage();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const { flash } = usePage().props;
+
+    useEffect(() => {
+        if (flash.success) toast.success(flash.success);
+        if (flash.error) toast.error(flash.error);
+        if (flash.info) toast.info(flash.info);
+        if (flash.warning) toast.warning(flash.warning);
+    }, [flash]);
 
     const navItems = [
         { name: 'Dashboard', icon: LayoutDashboard, href: '/', active: url === '/' },
@@ -128,11 +137,11 @@ export default function MainLayout({ children }) {
                         <div className="h-8 w-px bg-border mx-2" />
                         <div className="flex items-center space-x-3">
                             <div className="text-right hidden sm:block">
-                                <p className="text-sm font-semibold leading-none">Admin User</p>
-                                <p className="text-[10px] text-muted-foreground mt-1">Super Administrator</p>
+                                <p className="text-sm font-semibold leading-none">{auth.user.name}</p>
+                                <p className="text-[10px] text-muted-foreground mt-1">{auth.user.role}</p>
                             </div>
                             <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold">
-                                JD
+                                {auth.user.initials}
                             </div>
                         </div>
                     </div>

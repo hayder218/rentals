@@ -57,7 +57,9 @@
 </head>
 <body>
     <div class="header">
-        <img src="{{ public_path('logo.png') }}" style="width: 200px; height: auto;">
+        @if($logo)
+            <img src="{{ $logo }}" style="width: 200px; height: auto;">
+        @endif
         <h1>RENTAL AGREEMENT</h1>
         <p>Contract #{{ $rental->id }}</p>
     </div>

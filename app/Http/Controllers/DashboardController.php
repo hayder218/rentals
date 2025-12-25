@@ -43,30 +43,38 @@ class DashboardController extends Controller
 
         $revenue_growth = $last_week_revenue > 0 ? (($revenue_week - $last_week_revenue) / $last_week_revenue) * 100 : 0;
 
-        // Weekly Revenue Chart Data
-        $weekly_revenue_data = [];
+        // Weekly Revenue Chart Data (Optimized)
+        $weekly_revenue_data = Rental::selectRaw('DATE(end_date) as date, SUM(total_cost) as total')
+            ->whereBetween('end_date', [$startOfWeek, $endOfWeek])
+            ->where('status', 'completed')
+            ->groupBy('date')
+            ->get()
+            ->pluck('total', 'date');
+
+        $weekly_chart = [];
         for ($i = 0; $i < 7; $i++) {
-            $date = $startOfWeek->copy()->addDays($i);
-            $daily_revenue = Rental::whereDate('end_date', $date)
-                ->where('status', 'completed')
-                ->sum('total_cost');
-            $weekly_revenue_data[] = [
-                'day' => $date->format('D'),
-                'revenue' => (float) $daily_revenue
+            $date = $startOfWeek->copy()->addDays($i)->format('Y-m-d');
+            $weekly_chart[] = [
+                'day' => Carbon::parse($date)->format('D'),
+                'revenue' => (float) ($weekly_revenue_data[$date] ?? 0)
             ];
         }
 
-        // Trends Chart Data (30 Days)
+        // Trends Chart Data (30 Days Optimized)
+        $thirtyDaysAgo = Carbon::today()->subDays(29);
+        $trends_raw = Rental::selectRaw('DATE(end_date) as date, SUM(total_cost) as total')
+            ->whereDate('end_date', '>=', $thirtyDaysAgo)
+            ->where('status', 'completed')
+            ->groupBy('date')
+            ->get()
+            ->pluck('total', 'date');
+
         $trend_data = [];
         for ($i = 29; $i >= 0; $i--) {
-            $date = Carbon::today()->subDays($i);
-            $daily_sum = Rental::whereDate('end_date', $date)
-                ->where('status', 'completed')
-                ->sum('total_cost');
-            
+            $date = Carbon::today()->subDays($i)->format('Y-m-d');
             $trend_data[] = [
-                'date' => $date->format('M d'),
-                'revenue' => (float) $daily_sum
+                'date' => Carbon::parse($date)->format('M d'),
+                'revenue' => (float) ($trends_raw[$date] ?? 0)
             ];
         }
 
@@ -86,7 +94,7 @@ class DashboardController extends Controller
                 'revenue_week' => (float) $revenue_week,
                 'revenue_growth' => (float) $revenue_growth,
             ],
-            'chartData' => $weekly_revenue_data,
+            'chartData' => $weekly_chart,
             'trendData' => $trend_data,
             'recentMaintenance' => $recent_maintenance,
         ]);

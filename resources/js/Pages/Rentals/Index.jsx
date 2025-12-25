@@ -147,6 +147,7 @@ export default function Index({ rentals }) {
                 data={rentals}
                 columns={columns}
                 searchPlaceholder="Search customers, cars..."
+                exportHref="/reports/rentals"
             />
         </MainLayout>
     );

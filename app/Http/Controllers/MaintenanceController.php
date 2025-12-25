@@ -62,12 +62,12 @@ class MaintenanceController extends Controller
             Car::find($validated['car_id'])->update(['status' => 'maintenance']);
         }
 
-        return redirect()->route('maintenances.index');
+        return redirect()->route('maintenances.index')->with('success', 'Maintenance record created!');
     }
 
     public function destroy(Maintenance $maintenance)
     {
         $maintenance->delete();
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Maintenance record deleted!');
     }
 }

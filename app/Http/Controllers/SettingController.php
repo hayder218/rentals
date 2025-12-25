@@ -23,6 +23,6 @@ class SettingController extends Controller
 
         Setting::set('contract_terms', $request->contract_terms);
 
-        return redirect()->back()->with('status', 'Settings saved successfully!');
+        return redirect()->back()->with('success', 'Settings saved successfully!');
     }
 }

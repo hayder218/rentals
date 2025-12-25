@@ -1,14 +1,13 @@
 import React from 'react';
 import MainLayout from '@/Layouts/MainLayout';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { Button } from '@/Components/ui/button';
 import { Label } from '@/Components/ui/label';
 import { Textarea } from '@/Components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/Components/ui/card';
-import { Save, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Save, ShieldCheck } from 'lucide-react';
 
 export default function Settings({ contractTerms }) {
-    const { flash } = usePage().props;
     const { data, setData, put, processing, errors } = useForm({
         contract_terms: contractTerms || '',
     });
@@ -27,12 +26,6 @@ export default function Settings({ contractTerms }) {
                 <p className="text-muted-foreground mt-1">Configure global application parameters and contract templates.</p>
             </div>
 
-            {flash?.status && (
-                <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center text-emerald-700 animate-in fade-in slide-in-from-top-4">
-                    <CheckCircle2 className="h-5 w-5 mr-3" />
-                    {flash.status}
-                </div>
-            )}
 
             <div className="max-w-3xl">
                 <form onSubmit={submit} className="space-y-8">
