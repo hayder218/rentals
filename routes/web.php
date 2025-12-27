@@ -38,3 +38,9 @@ Route::put('/settings', [SettingController::class, 'update'])->name('settings.up
 use App\Http\Controllers\ContractController;
 Route::get('/rentals/{rental}/contract', [ContractController::class, 'download'])->name('rentals.contract');
 Route::get('/reports/rentals', [ContractController::class, 'exportAll'])->name('reports.rentals');
+
+// Financial Reports
+use App\Http\Controllers\ReportController;
+Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+Route::get('/reports/data', [ReportController::class, 'fetchData'])->name('reports.data');
+Route::get('/reports/download', [ReportController::class, 'download'])->name('reports.download');

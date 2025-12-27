@@ -11,7 +11,8 @@ import {
     ChevronLeft,
     ChevronRight,
     Search,
-    Bell
+    Bell,
+    BarChart3
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/Components/ThemeToggle';
@@ -37,6 +38,7 @@ export default function MainLayout({ children }) {
         { name: 'Fleet Inventory', icon: Car, href: '/cars', active: url.startsWith('/cars') },
         { name: 'Rentals', icon: CalendarRange, href: '/rentals', active: url.startsWith('/rentals') },
         { name: 'Maintenance', icon: Wrench, href: '/maintenances', active: url.startsWith('/maintenances') },
+        { name: 'Reports', icon: BarChart3, href: '/reports', active: url.startsWith('/reports') },
         { name: 'Settings', icon: Settings, href: '/settings', active: url === '/settings' },
     ];
 
