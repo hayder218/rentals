@@ -13,6 +13,7 @@ class MaintenanceController extends Controller
     {
         $search = $request->input('search', '');
         $status = $request->input('status', '');
+        $type = $request->input('type', '');
 
         $maintenances = Maintenance::with('car')
             ->when($search, function ($query) use ($search) {
@@ -26,14 +27,22 @@ class MaintenanceController extends Controller
             ->when($status, function ($query) use ($status) {
                 $query->where('status', $status);
             })
+            ->when($type, function ($query) use ($type) {
+                $query->where('type', $type);
+            })
             ->latest()
             ->get();
 
         return Inertia::render('Maintenances/Index', [
             'maintenances' => $maintenances,
+            'cars' => Car::all()->map(function ($car) {
+                $car->maintenance_status = $car->getMaintenanceStatus();
+                return $car;
+            }),
             'filters' => [
                 'search' => $search,
                 'status' => $status,
+                'type' => $type,
             ],
         ]);
     }
@@ -42,6 +51,7 @@ class MaintenanceController extends Controller
     {
         return Inertia::render('Maintenances/Create', [
             'cars' => Car::all(),
+            'rules' => \App\Models\MaintenanceRule::all(),
         ]);
     }
 
@@ -52,14 +62,24 @@ class MaintenanceController extends Controller
             'description' => 'required|string',
             'date' => 'required|date',
             'cost' => 'required|numeric|min:0',
-            'status' => 'required|in:pending,completed',
+            'status' => 'required|in:scheduled,completed',
+            'type' => 'required|in:consumable,repair',
+            'subtype' => 'nullable|string',
+            'mileage' => 'required|integer|min:0',
         ]);
 
-        Maintenance::create($validated);
+        $maintenance = Maintenance::create($validated);
 
-        // If maintenance is logged, optionally update car status
-        if ($validated['status'] === 'pending') {
-            Car::find($validated['car_id'])->update(['status' => 'maintenance']);
+        $car = Car::find($validated['car_id']);
+        
+        // Update car mileage if the maintenance mileage is higher
+        if ($validated['mileage'] > $car->current_mileage) {
+            $car->update(['current_mileage' => $validated['mileage']]);
+        }
+
+        // If maintenance is logged as scheduled, optionally update car status
+        if ($validated['status'] === 'scheduled') {
+            $car->update(['status' => 'maintenance']);
         }
 
         return redirect()->route('maintenances.index')->with('success', 'Maintenance record created!');

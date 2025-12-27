@@ -9,7 +9,9 @@ import {
     Plus,
     Edit2,
     Trash2,
-    Car as CarIcon
+    Car as CarIcon,
+    AlertTriangle,
+    Milestone
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -64,7 +66,29 @@ export default function Index({ cars }) {
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="License Plate" />
             ),
-            cell: ({ row }) => <span className="font-mono text-xs">{row.getValue("license_plate")}</span>
+            cell: ({ row }) => (
+                <div className="flex flex-col">
+                    <span className="font-mono text-xs font-bold">{row.getValue("license_plate")}</span>
+                    {row.original.maintenance_status?.some(s => s.status === 'overdue') && (
+                        <span className="flex items-center text-[10px] text-red-600 font-black uppercase mt-1">
+                            <AlertTriangle className="h-2.5 w-2.5 mr-1" />
+                            Overdue Service
+                        </span>
+                    )}
+                </div>
+            )
+        },
+        {
+            accessorKey: "current_mileage",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Mileage" />
+            ),
+            cell: ({ row }) => (
+                <div className="flex items-center text-sm font-medium">
+                    <Milestone className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
+                    {row.getValue("current_mileage").toLocaleString()} km
+                </div>
+            )
         },
         {
             accessorKey: "status",

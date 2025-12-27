@@ -23,7 +23,11 @@ class CarController extends Controller
                 $query->where('status', $status);
             })
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($car) {
+                $car->maintenance_status = $car->getMaintenanceStatus();
+                return $car;
+            });
 
         return Inertia::render('Cars/Index', [
             'cars' => $cars,
@@ -43,6 +47,7 @@ class CarController extends Controller
             'license_plate' => 'required|string|unique:cars,license_plate',
             'status' => 'required|in:available,rented,maintenance',
             'daily_rate' => 'required|numeric|min:0',
+            'current_mileage' => 'required|integer|min:0',
         ]);
 
         Car::create($validated);
@@ -59,6 +64,7 @@ class CarController extends Controller
             'license_plate' => 'required|string|unique:cars,license_plate,' . $car->id,
             'status' => 'required|in:available,rented,maintenance',
             'daily_rate' => 'required|numeric|min:0',
+            'current_mileage' => 'required|integer|min:0',
         ]);
 
         $car->update($validated);

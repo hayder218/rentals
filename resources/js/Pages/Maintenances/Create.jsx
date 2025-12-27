@@ -8,14 +8,27 @@ import { Textarea } from '@/Components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import { ArrowLeft, Save } from 'lucide-react';
 
-export default function Create({ cars }) {
+export default function Create({ cars, rules }) {
     const { data, setData, post, processing, errors } = useForm({
         car_id: '',
         description: '',
         date: new Date().toISOString().split('T')[0],
         cost: '',
-        status: 'pending',
+        status: 'scheduled',
+        type: 'repair',
+        subtype: '',
+        mileage: '',
     });
+
+    const handleCarChange = (e) => {
+        const carId = e.target.value;
+        const car = cars.find(c => c.id == carId);
+        setData(prev => ({
+            ...prev,
+            car_id: carId,
+            mileage: car ? car.current_mileage : prev.mileage
+        }));
+    };
 
     const submit = (e) => {
         e.preventDefault();
@@ -31,59 +44,116 @@ export default function Create({ cars }) {
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Back to Maintenance
                 </Link>
-                <h2 className="text-3xl font-bold tracking-tight mt-4">Log Maintenance</h2>
-                <p className="text-muted-foreground mt-1">Record a new service or repair for a vehicle.</p>
+                <div className="flex justify-between items-end mt-4">
+                    <div>
+                        <h2 className="text-3xl font-black tracking-tighter uppercase italic text-foreground">
+                            Record <span className="text-blue-600">Maintenance</span>
+                        </h2>
+                        <p className="text-muted-foreground mt-1">Log periodic services or unexpected repairs.</p>
+                    </div>
+                </div>
             </div>
 
-            <Card className="max-w-2xl">
-                <CardHeader>
-                    <CardTitle>Maintenance Details</CardTitle>
+            <Card className="max-w-3xl border-muted shadow-lg">
+                <CardHeader className="border-b bg-muted/30">
+                    <CardTitle className="text-lg font-bold">Service Details</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                     <form onSubmit={submit} className="space-y-6">
-                        <div className="space-y-2">
-                            <Label htmlFor="car_id">Vehicle</Label>
-                            <select
-                                id="car_id"
-                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                                value={data.car_id}
-                                onChange={e => setData('car_id', e.target.value)}
-                            >
-                                <option value="">Select a car...</option>
-                                {cars.map(car => (
-                                    <option key={car.id} value={car.id}>
-                                        {car.make} {car.model} ({car.license_plate})
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.car_id && <p className="text-xs text-red-500">{errors.car_id}</p>}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="car_id" className="text-xs font-bold uppercase tracking-wider">Vehicle</Label>
+                                <select
+                                    id="car_id"
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                                    value={data.car_id}
+                                    onChange={handleCarChange}
+                                >
+                                    <option value="">Select a car...</option>
+                                    {cars.map(car => (
+                                        <option key={car.id} value={car.id}>
+                                            {car.make} {car.model} ({car.license_plate}) - {car.current_mileage} km
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors.car_id && <p className="text-xs text-red-500 font-medium">{errors.car_id}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="mileage" className="text-xs font-bold uppercase tracking-wider">Odometer Reading (km)</Label>
+                                <Input
+                                    id="mileage"
+                                    type="number"
+                                    placeholder="Current mileage..."
+                                    value={data.mileage}
+                                    onChange={e => setData('mileage', e.target.value)}
+                                    className="h-10"
+                                />
+                                {errors.mileage && <p className="text-xs text-red-500 font-medium">{errors.mileage}</p>}
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="type" className="text-xs font-bold uppercase tracking-wider">Maintenance Type</Label>
+                                <select
+                                    id="type"
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                                    value={data.type}
+                                    onChange={e => setData(prev => ({ ...prev, type: e.target.value, subtype: e.target.value === 'repair' ? '' : prev.subtype }))}
+                                >
+                                    <option value="repair">Accident / Body Repair / General Fix</option>
+                                    <option value="consumable">Periodic Consumables (Oil, Brakes, etc.)</option>
+                                </select>
+                                {errors.type && <p className="text-xs text-red-500 font-medium">{errors.type}</p>}
+                            </div>
+
+                            {data.type === 'consumable' && (
+                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                                    <Label htmlFor="subtype" className="text-xs font-bold uppercase tracking-wider">Specific Service</Label>
+                                    <select
+                                        id="subtype"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                                        value={data.subtype}
+                                        onChange={e => setData('subtype', e.target.value)}
+                                    >
+                                        <option value="">Select consumable...</option>
+                                        {rules?.map(rule => (
+                                            <option key={rule.subtype} value={rule.subtype}>{rule.label}</option>
+                                        ))}
+                                        <option value="other">Other Periodic Maintenance</option>
+                                    </select>
+                                    {errors.subtype && <p className="text-xs text-red-500 font-medium">{errors.subtype}</p>}
+                                </div>
+                            )}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="description">Service Description</Label>
+                            <Label htmlFor="description" className="text-xs font-bold uppercase tracking-wider">Service Task Description</Label>
                             <Textarea
                                 id="description"
-                                placeholder="Describe the work performed or needed..."
+                                placeholder="Describe the specific work performed..."
                                 value={data.description}
                                 onChange={e => setData('description', e.target.value)}
-                                className="min-h-[120px]"
+                                className="min-h-[100px] bg-background"
                             />
-                            {errors.description && <p className="text-xs text-red-500">{errors.description}</p>}
+                            {errors.description && <p className="text-xs text-red-500 font-medium">{errors.description}</p>}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="space-y-2">
-                                <Label htmlFor="date">Date</Label>
+                                <Label htmlFor="date" className="text-xs font-bold uppercase tracking-wider">Date</Label>
                                 <Input
                                     id="date"
                                     type="date"
                                     value={data.date}
                                     onChange={e => setData('date', e.target.value)}
+                                    className="h-10"
                                 />
-                                {errors.date && <p className="text-xs text-red-500">{errors.date}</p>}
+                                {errors.date && <p className="text-xs text-red-500 font-medium">{errors.date}</p>}
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="cost">Cost ($)</Label>
+                                <Label htmlFor="cost" className="text-xs font-bold uppercase tracking-wider">Total Cost ($)</Label>
                                 <Input
                                     id="cost"
                                     type="number"
@@ -91,21 +161,22 @@ export default function Create({ cars }) {
                                     placeholder="0.00"
                                     value={data.cost}
                                     onChange={e => setData('cost', e.target.value)}
+                                    className="h-10"
                                 />
-                                {errors.cost && <p className="text-xs text-red-500">{errors.cost}</p>}
+                                {errors.cost && <p className="text-xs text-red-500 font-medium">{errors.cost}</p>}
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="status">Status</Label>
+                                <Label htmlFor="status" className="text-xs font-bold uppercase tracking-wider">Status</Label>
                                 <select
                                     id="status"
-                                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                                     value={data.status}
                                     onChange={e => setData('status', e.target.value)}
                                 >
-                                    <option value="pending">Pending</option>
+                                    <option value="scheduled">Scheduled / Pending</option>
                                     <option value="completed">Completed</option>
                                 </select>
-                                {errors.status && <p className="text-xs text-red-500">{errors.status}</p>}
+                                {errors.status && <p className="text-xs text-red-500 font-medium">{errors.status}</p>}
                             </div>
                         </div>
 

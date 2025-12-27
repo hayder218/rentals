@@ -15,6 +15,7 @@ export default function Create() {
         license_plate: '',
         status: 'available',
         daily_rate: '',
+        current_mileage: '0',
     });
 
     const submit = (e) => {
@@ -114,6 +115,19 @@ export default function Create() {
                                 />
                                 {errors.daily_rate && <p className="text-xs text-red-500">{errors.daily_rate}</p>}
                             </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="current_mileage">Current Mileage (km)</Label>
+                            <Input
+                                id="current_mileage"
+                                type="number"
+                                placeholder="0"
+                                value={data.current_mileage}
+                                onChange={e => setData('current_mileage', e.target.value)}
+                            />
+                            {errors.current_mileage && <p className="text-xs text-red-500">{errors.current_mileage}</p>}
+                            <p className="text-xs text-muted-foreground">Enter the current odometer reading. Leave as 0 for new vehicles.</p>
                         </div>
 
                         <div className="flex justify-end pt-4">

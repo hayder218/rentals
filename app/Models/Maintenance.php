@@ -16,6 +16,9 @@ class Maintenance extends Model
         'cost',
         'date',
         'status',
+        'type',
+        'subtype',
+        'mileage',
     ];
 
     protected $casts = [

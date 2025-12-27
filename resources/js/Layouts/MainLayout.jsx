@@ -33,11 +33,21 @@ export default function MainLayout({ children }) {
         if (flash.warning) toast.warning(flash.warning);
     }, [flash]);
 
+    const [maintenanceOpen, setMaintenanceOpen] = useState(url.startsWith('/maintenances'));
+
     const navItems = [
         { name: 'Dashboard', icon: LayoutDashboard, href: '/', active: url === '/' },
         { name: 'Fleet Inventory', icon: Car, href: '/cars', active: url.startsWith('/cars') },
         { name: 'Rentals', icon: CalendarRange, href: '/rentals', active: url.startsWith('/rentals') },
-        { name: 'Maintenance', icon: Wrench, href: '/maintenances', active: url.startsWith('/maintenances') },
+        {
+            name: 'Maintenance',
+            icon: Wrench,
+            active: url.startsWith('/maintenances'),
+            subItems: [
+                { name: 'Periodic Services', href: '/maintenances?type=consumable', active: url.startsWith('/maintenances') && new URLSearchParams(window.location.search).get('type') === 'consumable' },
+                { name: 'Accidents & Repairs', href: '/maintenances?type=repair', active: url.startsWith('/maintenances') && new URLSearchParams(window.location.search).get('type') === 'repair' },
+            ]
+        },
         { name: 'Reports', icon: BarChart3, href: '/reports', active: url.startsWith('/reports') },
         { name: 'Settings', icon: Settings, href: '/settings', active: url === '/settings' },
     ];
@@ -69,28 +79,75 @@ export default function MainLayout({ children }) {
 
                 <nav className="flex-1 px-3 py-6 space-y-1">
                     {navItems.map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={cn(
-                                "flex items-center px-4 py-3 rounded-xl transition-all duration-200 group relative",
-                                item.active
-                                    ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20"
-                                    : "text-zinc-400 hover:bg-zinc-900 hover:text-white",
-                                isCollapsed && "justify-center px-0"
+                        <div key={item.name}>
+                            {item.subItems ? (
+                                // Parent with sub-items
+                                <div>
+                                    <button
+                                        onClick={() => setMaintenanceOpen(!maintenanceOpen)}
+                                        className={cn(
+                                            "flex items-center w-full px-4 py-3 rounded-xl transition-all duration-200 group relative",
+                                            item.active
+                                                ? "bg-blue-600/10 text-blue-400"
+                                                : "text-zinc-400 hover:bg-zinc-900 hover:text-white",
+                                            isCollapsed && "justify-center px-0"
+                                        )}
+                                    >
+                                        <item.icon className={cn("w-5 h-5", !isCollapsed && "mr-3")} />
+                                        {!isCollapsed && (
+                                            <>
+                                                <span className="font-medium whitespace-nowrap flex-1 text-left">{item.name}</span>
+                                                <ChevronRight className={cn(
+                                                    "w-4 h-4 transition-transform",
+                                                    maintenanceOpen && "rotate-90"
+                                                )} />
+                                            </>
+                                        )}
+                                    </button>
+                                    {!isCollapsed && maintenanceOpen && (
+                                        <div className="ml-4 mt-1 space-y-1 border-l-2 border-zinc-800 pl-4">
+                                            {item.subItems.map((subItem) => (
+                                                <Link
+                                                    key={subItem.href}
+                                                    href={subItem.href}
+                                                    className={cn(
+                                                        "flex items-center px-3 py-2 rounded-lg transition-all duration-200 text-sm",
+                                                        subItem.active
+                                                            ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20"
+                                                            : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
+                                                    )}
+                                                >
+                                                    <span className="font-medium whitespace-nowrap">{subItem.name}</span>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                // Regular nav item
+                                <Link
+                                    href={item.href}
+                                    className={cn(
+                                        "flex items-center px-4 py-3 rounded-xl transition-all duration-200 group relative",
+                                        item.active
+                                            ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20"
+                                            : "text-zinc-400 hover:bg-zinc-900 hover:text-white",
+                                        isCollapsed && "justify-center px-0"
+                                    )}
+                                >
+                                    <item.icon className={cn("w-5 h-5", !isCollapsed && "mr-3")} />
+                                    {!isCollapsed && (
+                                        <span className="font-medium whitespace-nowrap">{item.name}</span>
+                                    )}
+                                    {isCollapsed && item.active && (
+                                        <motion.div
+                                            layoutId="active-nav"
+                                            className="absolute left-0 w-1 h-6 bg-white rounded-r-full"
+                                        />
+                                    )}
+                                </Link>
                             )}
-                        >
-                            <item.icon className={cn("w-5 h-5", !isCollapsed && "mr-3")} />
-                            {!isCollapsed && (
-                                <span className="font-medium whitespace-nowrap">{item.name}</span>
-                            )}
-                            {isCollapsed && item.active && (
-                                <motion.div
-                                    layoutId="active-nav"
-                                    className="absolute left-0 w-1 h-6 bg-white rounded-r-full"
-                                />
-                            )}
-                        </Link>
+                        </div>
                     ))}
                 </nav>
 
